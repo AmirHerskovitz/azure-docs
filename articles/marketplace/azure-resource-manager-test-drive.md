@@ -305,37 +305,48 @@ The final section to complete is to be able to deploy the test drives automatica
 
 3. **Azure AD App ID** – Create and register a new application. We will use this application to perform operations on your test drive instance.
 
-   1. Navigate to the newly created directory or already existing directory and select Azure Active Directory in the filter pane.
-   2. Search **App registrations** and select **Add**.
-   3. Provide an application name.
-   4. Select the **Type** of **Web app / API**.
-   5. Provide any value in the Sign-on URL, this field isn't used.
-   6. Select **Create**.
-   7. After the application has been created, select **Properties** > **Set the application as multi-tenant** and then **Save**.
+   **If you don’t have the PowerShell module**
+    **Install the Azure Az PowerShell module**
+          a.	Open Powershell 
+          b.	Run the command Get-InstalledModule Az to check if you have the module already installed
+          c.	If not, follow Install the Azure Az PowerShell module to install it
+          
+          
+     **Add Service Principal for Microsoft Test-Drive application**
+          a.	Run the command Connect-AzAccount and provide credentials to login to Azure Account.
+          b.	Create new service principal with:
+              New-AzADServicePrincipal -ApplicationId d7e39695-0b24-441c-a140-047800a05ede -DisplayName 'Microsoft TestDrive'
+          c.	Verify that the service principal have been created with:
+                Get-AzADServicePrincipal -DisplayName 'Microsoft TestDrive'
+ 
+      **(Add an IMG)**
 
 4. Select **Save**.
 
-5. Copy the Application ID for this registered app and paste it in the test drive field.
-
-   ![Azure AD application ID detail](media/test-drive/azure-ad-application-id-detail.png)
+5. Paste this AppID: d7e39695-0b24-441c-a140-047800a05ede and paste it in the test drive field
 
 6. Since we are using the application to deploy to the subscription, we need to add the application as a contributor on the subscription:
 
    1. Select the type of **Subscription** you are using for the test drive.
    1. Select **Access control (IAM)**.
-   1. Select the **Role assignments** tab, then **Add role assignment**.
+    
+   In case you are using power-shell:
+      i.	Run the following command to get the ServicePrincipal object-id:
+          (Get-AzADServicePrincipal -DisplayName 'Microsoft TestDrive').id
+      ii.	Run the following command with the ObjectId and Subscription Id:
+          New-AzRoleAssignment -ObjectId <objectId> -RoleDefinitionName Contributor -Scope /subscriptions/<subscriptionId>
+  
+   3. Select the **Role assignments** tab, then **Add role assignment**.
 
       ![Add a new Access Control principal](media/test-drive/access-control-principal.jpg)
 
-   1. Set **Role** and **Assign access to** as shown. In the **Select** field, enter the name of the Azure AD application. Select the application to which you want to assign the **Contributor** role.
+   1. **Enter** this Azure AD application name : 'Microsoft TestDrive'. Select the application to which you want to assign the **Contributor** role.
 
       ![Add the permissions](media/test-drive/access-control-permissions.jpg)
 
    1. Select **Save**.
 
-7. Generate an **Azure AD App** authentication key. Under **Keys**, add a **Key Description**, set the duration to **Never expires** (an expired key will break your test drive in production), then select **Save**. Copy and paste this value into your required test drive field.
-
-![Shows the Keys for the Azure AD application](media/test-drive/azure-ad-app-keys.png)
+7.**Deleted- will get replaced once we'll have the info.**
 
 ## Republish
 
